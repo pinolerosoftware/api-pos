@@ -1,7 +1,7 @@
 const Location = require('../models/locations');
 
 const getLocations = (req, res, next) => {
-    Location.find({}, (err, locations) => {
+    Location.find({active: true}, (err, locations) => {
 		if(err)
 			res.status(500).send({message: `Error al consultar el listado de ubicaciones`, info: err})
 		else
@@ -44,6 +44,8 @@ const deleteLocation = (req, res, next) => {
 const insertLocation = (req, res, next) => {
 	let location = new Location();
     location.name = req.body.name;
+	location.companyId = req.body.companyId;
+	location.active = true;
 
 	location.save((err, locationStored) => {
 		if(err) 

@@ -1,7 +1,7 @@
 const Category = require('../models/categories');
 
 const getCategories = (req, res, next) => {
-    Category.find({}, (err, categories) => {
+    Category.find({active: true}, (err, categories) => {
 		if(err)
 			res.status(500).send({message: `Error al consultar el listado de categorías`, info: err})
 		else
@@ -44,6 +44,8 @@ const deleteCategory = (req, res, next) => {
 const insertCategory = (req, res, next) => {
     let category = new Category();
 	category.name = req.body.name;
+	category.companyId = req.body.companyId;
+	category.active = true;
 	
     category.save((err, categoryStored) => {
 		if(err)

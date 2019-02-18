@@ -11,7 +11,7 @@ aws.config.update({
 
 const s3 = new aws.S3();
 
-s3.listBuckets(function(err, data) { console.log(err, data); });
+//s3.listBuckets(function(err, data) { console.log(err, data); });
 
 const fileFilter = (req, file, cb) => {
     if(file.mimetype == 'image/jpeg' || file.mimetype == 'image/png')

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const LocationsController = require('../controllers/locations')
+const LocationsController = require('../controllers/locations');
 
 /* GET users listing. */
 router.get('/', LocationsController.getLocations);

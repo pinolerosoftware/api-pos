@@ -7,6 +7,8 @@ const ProductSchema = new Schema({
     location:   String,
     description: String,
     price: {type: Number, default: 0},
+    companyId: String,
+    active: Boolean
 });
 
 module.exports = mongoose.model('Product', ProductSchema);

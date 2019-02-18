@@ -1,0 +1,24 @@
+extends layout
+
+block content
+    h1 Productos
+
+    script(type='text/javascript').
+        let productList = document.createElement('ul');
+        const productHeaders = new Headers();
+        productHeaders.append('authorization', `Bearer ${localStorage.token}`);
+
+        fetch('/api/products/', {
+            method: 'GET',
+            headers: productHeaders
+        })
+        .then(res => res.json())
+        .then(data =>{
+            data.Products.map(product => {
+                let name = document.createTextNode(product.name + " - " + product.category)
+                let element = document.createElement('li')
+                element.appendChild(name)
+                productList.appendChild(element)
+            })
+            document.body.appendChild(productList)
+        }) 

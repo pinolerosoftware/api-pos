@@ -11,6 +11,7 @@ const usersRouter = require('./routes/users');
 const productsRouter = require('./routes/products');
 const locationsRouter = require('./routes/locations');
 const categoriesRouter = require('./routes/categories');
+const companiesRouter = require('./routes/companies');
 
 const app = express();
 
@@ -28,11 +29,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Routers
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/products', productsRouter);
-app.use('/locations', locationsRouter);
-app.use('/categories', categoriesRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/products', productsRouter);
+app.use('/api/locations', locationsRouter);
+app.use('/api/categories', categoriesRouter);
+app.use('/api/companies', companiesRouter);
 
+app.use('/login', (req, res) => {
+  res.render('login');
+})
+
+app.use('/products', (req, res) => {
+  res.render('products');
+})
 
 
 // catch 404 and forward to error handler

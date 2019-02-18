@@ -6,10 +6,8 @@ const auth = require('../middlewares/auth')
 /* GET users listing. */
 router.post('/singup', UserController.singUp);
 
-router.get('/singin', UserController.singIn);
+router.post('/signin', UserController.signIn);
 
-router.get('/', auth, function(req, res, next) {
-  res.status(200).send({message: "Tienes acceso"});
-});
+router.get('/', auth, UserController.getUsers);
 
 module.exports = router;
