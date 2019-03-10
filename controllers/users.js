@@ -24,13 +24,17 @@ const singUp = (req, res, next) => {
         active: true
     })
     
-    User.find({email: req.body.email}, (err, user) => {        
-        if (err) return res.status(500).send({message: `Correo ${req.body.email} ya esta registrado ${err}`});
+    User.findOne({email: req.body.email}, (err, user) => {        
+        if (err) return res.status(500).send({message: `Error en el servidor ${err}`});
 
-        User.find({userName: req.body.userName}, (err, user) => {            
-            if (err) return res.status(500).send({message: `usuario ${req.body.userName} ya esta registrado ${err}`});
+        if(user) return res.status(500).send({message: `Correo ${req.body.email} ya esta registrado`});
 
-            newUser.save((err) => {                
+        User.findOne({userName: req.body.userName}, (err, user) => {            
+            if (err) return res.status(500).send({message: `Error en el servidor ${err}`});
+
+            if(user) return res.status(500).send({message: `Usuario ${req.body.userName} ya esta registrado`});
+
+            newUser.save((err, user) => {                
                 if (err) return res.status(500).send({message: `Error al crear el usuario ${err}`})
 
                 return res.status(200).send({token: service.createToken(user), message: "Usuario creado exitosamente"})
