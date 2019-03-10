@@ -5,7 +5,7 @@ const upload = require('../services/upload');
 const auth = require('../middlewares/auth');
 //const singleUpload = upload.single('image')
 
-/* GET users listing. */
+/* GET product listing. */
 router.get('/', auth, ProductsController.getProducts);
 
 router.get('/:productId', ProductsController.getProduct);
