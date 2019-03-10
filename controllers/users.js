@@ -15,7 +15,6 @@ const singUp = (req, res, next) => {
 
     var pass = bcrypt.hashSync(req.body.password);
 
-    console.log(pass);
     const newUser = new User({
         email: req.body.email,
         userName:  req.body.userName,        
