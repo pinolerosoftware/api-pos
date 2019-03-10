@@ -1,7 +1,6 @@
 const User = require('../models/users')
 const service = require('../services')
-
-
+const bcrypt = require('bcrypt-nodejs');
 
 const getUsers = function(req, res, next) {
     User.find({active: true}, (err, categories) => {
@@ -13,26 +12,44 @@ const getUsers = function(req, res, next) {
 }
 
 const singUp = (req, res, next) => {
-    const user = new User({
+
+    var pass = bcrypt.hashSync(req.body.password);
+
+    console.log(pass);
+    const newUser = new User({
         email: req.body.email,
-        userName:  req.body.userName,
-        //avatar: req.body.avatar,
-        password: req.body.password,
+        userName:  req.body.userName,        
+        password: pass,
         signupDate: new Date(),
         active: true
     })
     
-    User.save((err, user) => {
-        if (err) res.status(500).send({message: `Error al crear el usuario ${err}`})
+    User.find({email: req.body.email}, (err, user) => {        
+        if (err) return res.status(500).send({message: `Correo ${req.body.email} ya esta registrado ${err}`});
 
-        return res.status(200).send({token: service.createToken(user), message: "Usuario creado exitosamente"})
-    })
+        User.find({userName: req.body.userName}, (err, user) => {            
+            if (err) return res.status(500).send({message: `usuario ${req.body.userName} ya esta registrado ${err}`});
+
+            newUser.save((err) => {                
+                if (err) return res.status(500).send({message: `Error al crear el usuario ${err}`})
+
+                return res.status(200).send({token: service.createToken(user), message: "Usuario creado exitosamente"})
+            })    
+        });
+    }); 
 }
 
-const signIn = (req, res, next) => {
-    User.find({email: req.body.email, password: req.body.password}, (err, user) => {
+const signIn = (req, res, next) => {    
+
+    var email = req.body.email;
+    var pass = req.body.password;
+    
+    User.findOne({email: email}, (err, user) => {                
         if (err) return res.status(500).send({message: `Error en el servidor ${err}`})
-        if(!user) return res.status(404).send({message: `El usuario no existe`})
+
+        if (!user) return res.status(404).send({message: `El usuario no existe`})
+        
+        if(!bcrypt.compareSync(pass, user.password)) return res.status(404).send({message: `La contraseña es incorrecta`});
 
         res.status(200).send({
             message: "Te has logeado correctamente",
@@ -40,7 +57,6 @@ const signIn = (req, res, next) => {
         })
 	})
 }
-
 
 module.exports = {
     singUp,
