@@ -8,7 +8,6 @@ const createToken = (user) => {
         iat: moment().unix(),
         exp: moment().add(14, 'days').unix(),
     }
-
     return jwt.encode(payload, config.SECRET_TOKEN)
 }
 
@@ -22,17 +21,14 @@ const decodeToken = (token) => {
                     message: "El token ha expirado"
                 })
             }
-
             resolve(payload.sub)
         } catch(err){
             reject({
                 status: 500,
                 message: "Invalid Token"
             })
-
         }
     })
-
     return decoded
 }
 
