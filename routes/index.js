@@ -3,7 +3,7 @@ const router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'POS' });
+  res.status(200).send({ message: "Page Principal API" })
 });
 
 module.exports = router;
