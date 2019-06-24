@@ -42,9 +42,10 @@ const deleteCategory = (req, res, next) => {
 }
 
 const insertCategory = (req, res, next) => {
-    let category = new Category();
+	let category = new Category();
+	console.log(req.body)
 	category.name = req.body.name;
-	category.companyId = req.body.companyId;
+	//category.companyId = req.body.companyId;
 	category.active = true;
 	
     category.save((err, categoryStored) => {

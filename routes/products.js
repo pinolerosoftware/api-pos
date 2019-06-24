@@ -6,7 +6,7 @@ const auth = require('../middlewares/auth');
 //const singleUpload = upload.single('image')
 
 /* GET product listing. */
-router.get('/', auth, ProductsController.getProducts);
+router.get('/', ProductsController.getProducts);
 
 router.get('/:productId', ProductsController.getProduct);
 
