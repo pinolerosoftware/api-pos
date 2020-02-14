@@ -4,7 +4,8 @@ const getCategories = (req, res, next) => {
 	let {companyId} = req.params;
 
     Category.find({companyId: companyId}, (err, categories) => {
-		if(err) return res.status(500).send({message: `Error al consultar el listado de categorías`, info: err});
+		if(err) 
+			return res.status(500).send({message: `Error al consultar el listado de categorías`, info: err});
 		
 		return res.status(200).send({categories});
 	});
