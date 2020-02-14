@@ -1,59 +1,99 @@
 const Category = require('../models/categories');
 
 const getCategories = (req, res, next) => {
-    Category.find({active: true}, (err, categories) => {
-		if(err)
-			res.status(500).send({message: `Error al consultar el listado de categorías`, info: err})
-		else
-			res.status(200).send({categories})
+	let {companyId} = req.params;
+
+    Category.find({companyId: companyId}, (err, categories) => {
+		if(err) return res.status(500).send({message: `Error al consultar el listado de categorías`, info: err});
+		
+		return res.status(200).send({categories});
 	});
 }
 
 const getCategory = (req, res, next) => {
-    let {categoryId} = req.params;
-	let data = req.body;
-	Category.findById(categoryId, data, (err, category) => {
-		if(err)
-			res.status(500).send({message: `Error al actualizar la categoría`, info: err})
-		else
-			res.status(200).send({category})
-	});
-}
+	let {categoryId} = req.params;
+	let {companyId} = req.params;
 
-const updateCategory = (req, res, next) => {
-    let {categoryId} = req.params;
-	let data = req.body;
-	Category.findByIdAndUpdate(categoryId, data, (err, Category) => {
-		if(err)
-			res.status(500).send({message: `Error al actualizar la categoría`, info: err})
-		else
-			res.status(200).send({message: "Actualizado exitosamente", category: Category})
-	});
-}
+	Category.findOne({companyId: companyId, categoryId: categoryId}, (err, category) => {
+		if(!category) return res.status(500).send({message: `Error, no se encontro la categoria`, info: err});
 
-const deleteCategory = (req, res, next) => {
-    let {categoryId} = req.params;
-	Category.findByIdAndDelete(categoryId, (err, Category) => {
-		if(err)
-			res.status(500).send({message: `Error al eliminar la categoría`, info: err})
-        else
-			res.status(200).send({message : "Categoría eliminada"})
+		if(err) return res.status(500).send({message: `Error, al buscar categoria`, info: err});
+		
+		return res.status(200).send({category});
 	});
 }
 
 const insertCategory = (req, res, next) => {
-	let category = new Category();
-	console.log(req.body)
-	category.name = req.body.name;
-	//category.companyId = req.body.companyId;
-	category.active = true;
+	let {companyId} = req.params;
+
+    let newCategory = new Category();
+	newCategory.name = req.body.name;
+	newCategory.companyId = req.body.companyId;
+	newCategory.active = true;
+
+	if(companyId != newCategory.companyId) return res.status(500).send({message: `Error, datos incorrecto`});
 	
-    category.save((err, categoryStored) => {
-		if(err)
-			res.status(500).send({message: `Error al insertar la categoría`, info: err})
-		else
-			res.status(200).send({message: "Almacenado exitosamente", category: categoryStored})
-    });
+	Category.findOne({companyId: companyId, name: newCategory.name}, (err, category) => {
+		if(category) return res.status(500).send({message: `La categoria ${newCategory.name} ya esta registrado`});
+
+		if(err) return res.status(500).send({message: `Error, al buscar categoria`, info: err});
+
+		newCategory.save((err, category) => {
+			if(err) return res.status(500).send({message: `Error al insertar la categoría`, info: err});
+
+			return res.status(200).send({message: "Almacenado exitosamente", category: category});
+		});
+	});
+}
+
+const updateCategory = (req, res, next) => {
+	let {categoryId} = req.params;
+	let {companyId} = req.params;
+
+	let updateCategory = {};
+	updateCategory.name = req.body.name;
+	updateCategory.companyId = req.body.companyId;
+	updateCategory.active = req.body.active;
+
+	if(categoryId != req.body._id) return res.status(500).send({message: `Error, datos incorrecto`});
+	if(companyId != req.body.companyId) return res.status(500).send({message: `Error, datos incorrecto`});
+
+	Category.findOne({companyId: companyId, name: updateCategory.name}, (err, category) => {
+		if(err) return res.status(500).send({message: `Error, al buscar categoria`, info: err});
+
+		if(category){
+			if(category._id != categoryId)
+				return res.status(500).send({message: `La categoria ${newCategory.name} ya esta registrado`});
+		}	
+
+		Category.findByIdAndUpdate(categoryId, updateCategory, (err, category) => {
+			if(err) return res.status(500).send({message: `Error al actualizar la categoría`, info: err});
+
+			if(!category) return res.status(500).send({message: `Error, no se pudo actualizar datos de la categoria`});
+			
+			return res.status(200).send({message: "Actualizado exitosamente", category: category});
+		});
+	});	
+}
+
+const deleteCategory = (req, res, next) => {
+    let {categoryId} = req.params;
+	let {companyId} = req.params;
+
+	if(categoryId != req.body._id) return res.status(500).send({message: `Error, datos incorrecto`});
+	if(companyId != req.body.companyId) return res.status(500).send({message: `Error, datos incorrecto`});
+
+	Category.findOne({companyId: req.body.companyId, _id: req.body._id}, (err, category) => {
+		if(!category) return res.status(500).send({message: `Error, categoria no existe`});
+
+		if(err) return res.status(500).send({message: `Error, al buscar categoria`, info: err});
+
+		Category.findByIdAndDelete(categoryId, (err, category) => {
+			if(err) return res.status(500).send({message: `Error al eliminar la categoria`, info: err});
+
+			return	res.status(200).send({category});
+		});
+	});		
 }
 
 module.exports = {

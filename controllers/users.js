@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt-nodejs');
 const getUsers = function(req, res, next) {
     User.find({active: true}, (err, users) => {
 		if(err)
-			res.status(500).send({message: `Error al consultar el listado de usuarios`, info: err})
+			return res.status(500).send({message: `Error al consultar el listado de usuarios`, info: err})
 		else
 			res.status(200).send({users})
 	});
