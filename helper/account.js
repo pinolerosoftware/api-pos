@@ -1,12 +1,13 @@
 const jwt = require('jwt-simple')
 const moment = require('moment')
 const config = require('../config')
+const { httpCode } = require('../constants/httpResponse');
 
 const createToken = (user) => {
     const payload = {
         sub: user._id,
         iat: moment().unix(),
-        exp: moment().add(14, 'days').unix(),
+        exp: moment().add(config.DAY_TOKEN_EXPIRE, 'days').unix(),
     }
     return jwt.encode(payload, config.SECRET_TOKEN)
 }
@@ -14,17 +15,18 @@ const createToken = (user) => {
 const decodeToken = (token) => {
     const decoded = new Promise((resolve, reject) =>{
         try{
-            const payload = jwt.decode(token, config.SECRET_TOKEN)
+            const payload = jwt.decode(token, config.SECRET_TOKEN)            
             if (payload.exp <= moment().unix()) {
                 resolve({
-                    status: 401,
+                    status: httpCode.unauthorized,
                     message: "El token ha expirado"
-                })
-            }
+                });   
+                return;             
+            }            
             resolve(payload.sub)
         } catch(err){
             reject({
-                status: 500,
+                status: httpCode.internalErrorServer,
                 message: "Invalid Token"
             })
         }

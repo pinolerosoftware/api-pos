@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ProductsController = require('../controllers/products')
-const upload = require('../services/upload');
+const upload = require('../helper/upload');
 const auth = require('../middlewares/auth');
 //const singleUpload = upload.single('image')
 

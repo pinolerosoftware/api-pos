@@ -7,6 +7,8 @@ const UserSchema = new Schema({
     avatar: String,
     password: {type: String},
     signupDate: {type: Date, default: Date.now()},
+    firstName: String,
+    lastName: String,    
     lastLogin: Date,
     companyId: String,
     active: Boolean

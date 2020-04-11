@@ -13,6 +13,7 @@ const config = require('../config')
 /**
  * Mongodb Connection
  */
+mongoose.Promise = global.Promise;
 mongoose.connect(config.db, { useNewUrlParser: true });
 mongoose.set('useCreateIndex', true);
 /**

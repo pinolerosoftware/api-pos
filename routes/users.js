@@ -4,7 +4,7 @@ const UserController = require('../controllers/users')
 const auth = require('../middlewares/auth')
 
 /* GET users listing. */
-router.post('/singup', UserController.singUp);
+router.post('/signup', UserController.signUp);
 
 router.post('/signin', UserController.signIn);
 

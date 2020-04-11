@@ -1,68 +1,80 @@
-const User = require('../models/users')
-const service = require('../services')
 const bcrypt = require('bcrypt-nodejs');
+const helperAccount = require('../helper/account');
+const serviceUsers = require('../services/users');
+const { httpCode } = require('../constants/httpResponse');
 
 const getUsers = function(req, res, next) {
-    User.find({active: true}, (err, users) => {
-		if(err)
-			return res.status(500).send({message: `Error al consultar el listado de usuarios`, info: err})
-		else
-			res.status(200).send({users})
-	});
-}
-
-const singUp = (req, res, next) => {
-
-    var pass = bcrypt.hashSync(req.body.password);
-
-    const newUser = new User({
-        email: req.body.email,
-        userName:  req.body.userName,        
-        password: pass,
-        signupDate: new Date(),
-        active: true
+    const users = serviceUsers.getUsers();
+    users
+    .then(data => {
+        res.status(httpCode.ok).send(data);
     })
-    
-    User.findOne({email: req.body.email}, (err, user) => {        
-        if (err) return res.status(500).send({message: `Error en el servidor ${err}`});
-
-        if(user) return res.status(500).send({message: `Correo ${req.body.email} ya esta registrado`});
-
-        User.findOne({userName: req.body.userName}, (err, user) => {            
-            if (err) return res.status(500).send({message: `Error en el servidor ${err}`});
-
-            if(user) return res.status(500).send({message: `Usuario ${req.body.userName} ya esta registrado`});
-
-            newUser.save((err, user) => {                
-                if (err) return res.status(500).send({message: `Error al crear el usuario ${err}`})
-
-                return res.status(200).send({token: service.createToken(user), message: "Usuario creado exitosamente"})
-            })    
-        });
-    }); 
+    .catch(error => {
+        res.status(httpCode.internalErrorServer).send({message: `Error al consultar el listado de usuarios`, info: err});
+    });
 }
 
-const signIn = (req, res, next) => {    
+const signUp = (req, res, next) => {    
+    let email = req.body.email;
+    let userName = req.body.userName;
+    const existsEmail = serviceUsers.existsEmail(email);
+    const existsUseName = serviceUsers.existsUserNmae(userName);    
+    existsEmail
+    .then(valueEmail => {
+        console.log(valueEmail);
+        if(valueEmail)
+            res.status(httpCode.internalErrorServer).send({message: `El email ${email} ya esta registrado`});
+        else {
+            existsUseName
+            .then(valueUserName => {
+                if(valueUserName)
+                    res.status(httpCode.internalErrorServer).send({message: `El nombre de usuario ${userName} ya esta registrado`});
+                else {
+                    const newUser = serviceUsers.signUp(req.body);
+                    newUser
+                    .then(user => {
+                        res.status(httpCode.ok).send({token: helperAccount.createToken(user), message: "Usuario creado exitosamente"});
+                    })
+                    .catch(error => {
+                        res.status(httpCode.internalErrorServer).send({message: `${error}`});
+                    });
+                }
+            })
+            .catch(err => {
+                res.status(httpCode.internalErrorServer).send({message: `${err}`});
+            });
+        }        
+    })
+    .catch(err => {
+        res.status(httpCode.internalErrorServer).send({message: `${err}`});
+    });   
+}
 
-    var email = req.body.email;
-    var pass = req.body.password;
-    
-    User.findOne({email: email}, (err, user) => {                
-        if (err) return res.status(500).send({message: `Error en el servidor ${err}`})
-
-        if (!user) return res.status(404).send({message: `El usuario no existe`})
-        
-        if(!bcrypt.compareSync(pass, user.password)) return res.status(404).send({message: `La contraseña es incorrecta`});
-
-        res.status(200).send({
-            message: "Te has logeado correctamente",
-            token: service.createToken(user)
+const signIn = (req, res, next) => {  
+    const { password } = req.body;    
+    const userFind = serviceUsers.signIn(req.body);    
+    userFind
+    .then(user => {        
+        if(!user) {
+            res.status(httpCode.notFound).send({message: `El correo no se encuentra registrado`});
+            return;
+        }
+        if(!bcrypt.compareSync(password, user.password)) {
+            res.status(httpCode.notFound).send({message: `La contraseña es incorrecta`});
+            return;
+        }            
+        res.status(httpCode.ok).send({
+            message: "Se inicio sesión correctamente",
+            token: helperAccount.createToken(user)
         })
-	})
+    })
+    .catch(err => {
+        res.status(httpCode.internalErrorServer).send({message: `${err}`});
+    });  
 }
 
 module.exports = {
-    singUp,
+    signUp,
     signIn,
     getUsers,
 }
