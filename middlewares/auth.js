@@ -1,28 +1,28 @@
 const helperAccount = require('../helper/account');
 const { httpCode } = require('../constants/httpResponse');
-const serviceUsers = require('../services/users');
+const User = require('../models/users');
 
 const isAuth = (req, res, next) => {    
-    if (!req.headers.authorization)
-        return res.status(httpCode.forbidden).send({message: "No tienes autorizacion"});    
+    if (!req.headers.authorization) {
+        res.status(httpCode.forbidden).send({message: "No tienes autorizacion"});    
+        return;
+    }
+
     const token = req.headers.authorization.split(" ")[1];    
     helperAccount.decodeToken(token)
-        .then(userId => {            
-            const user = serviceUsers.existsUser(userId);
-            console.log(user);
-            user
-            .then(userModel => {
-                console.log(userModel);
-                if(!userModel) {
-                    res.status(httpCode.forbidden).send({message: "Token invalido, usuario no registrado"});
+        .then(userId => {                        
+            User.findById(userId, (err, user) => {
+                if (err) {
+                    res.status(httpCode.internalErrorServer).send({message: `Error en el servidor ${err}`})
+                    return;
+                }                
+                if(!user) {
+                    res.status(httpCode.internalErrorServer).send({message: `Token invalido, usuario invalido`})
                     return;
                 }
                 req.user = userId;
                 next();
-            })
-            .catch(err => {
-                res.status(httpCode.internalErrorServer).send({message: `${err}`});
-            });
+            });                       
         })
         .catch(response => {
             res.status(response.status).send(response.message)

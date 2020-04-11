@@ -24,10 +24,10 @@ app.use(cookieParser());
 //Routers
 app.use('/api/', indexRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/companies', companiesRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/locations', locationsRouter);
 app.use('/api/categories', categoriesRouter);
-app.use('/api/companies', companiesRouter);
 
 
 // catch 404 and forward to error handler

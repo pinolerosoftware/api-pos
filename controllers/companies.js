@@ -1,6 +1,6 @@
 const Company = require('../models/companies');
 
-const getCompanies = (req, res, next) => {
+const getCompanies = (req, res) => {
     Company.find({userId: req.user}, (err, companies) => {
 		if(err) return res.status(500).send({message: `Error al consultar el listado de compañias`, info: err});
 		
@@ -8,7 +8,7 @@ const getCompanies = (req, res, next) => {
 	});
 }
 
-const getCompany = (req, res, next) => {
+const getCompany = (req, res) => {
 	let {companyId} = req.params;
 	
     Company.findOne({userId: req.user, _id: companyId}, (err, company) => {
@@ -21,7 +21,7 @@ const getCompany = (req, res, next) => {
 	});
 }
 
-const insertCompany = (req, res, next) => {	
+const insertCompany = (req, res) => {	
     let newCompany = new Company();
 	newCompany.name = req.body.name;
 	newCompany.businessName = req.body.businessName;
@@ -52,7 +52,7 @@ const insertCompany = (req, res, next) => {
 	});    
 }
 
-const updateCompany = (req, res, next) => {
+const updateCompany = (req, res) => {
 	let {companyId} = req.params;
 	
 	if(companyId != req.body._id) return res.status(500).send({message: `Error, datos incorrectos`});
@@ -94,7 +94,7 @@ const updateCompany = (req, res, next) => {
 	});	
 }
 
-const deleteCompany = (req, res, next) => {
+const deleteCompany = (req, res) => {
 	let {companyId} = req.params;
 
 	if(companyId != req.body._id) return res.status(500).send({message: `Error, datos incorrectos`});
