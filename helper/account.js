@@ -12,10 +12,10 @@ const createToken = (user) => {
     return jwt.encode(payload, config.SECRET_TOKEN)
 }
 
-const decodeToken = (token) => {
+const decodeToken = (token) => {    
     const decoded = new Promise((resolve, reject) =>{
         try{
-            const payload = jwt.decode(token, config.SECRET_TOKEN)            
+            const payload = jwt.decode(token, config.SECRET_TOKEN);
             if (payload.exp <= moment().unix()) {
                 resolve({
                     status: httpCode.unauthorized,
@@ -23,12 +23,12 @@ const decodeToken = (token) => {
                 });   
                 return;             
             }            
-            resolve(payload.sub)
+            resolve(payload.sub);
         } catch(err){
             reject({
                 status: httpCode.internalErrorServer,
                 message: "Invalid Token"
-            })
+            });
         }
     })
     return decoded

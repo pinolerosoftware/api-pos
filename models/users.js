@@ -10,7 +10,10 @@ const UserSchema = new Schema({
     firstName: String,
     lastName: String,    
     lastLogin: Date,
-    companyId: String,
+    companyId: {
+        type: Schema.Types.ObjectId,
+        ref: "company"
+    },
     active: Boolean
 });
 

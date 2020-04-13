@@ -4,10 +4,10 @@ const User = require('../models/users');
 
 const isAuth = (req, res, next) => {    
     if (!req.headers.authorization) {
-        res.status(httpCode.forbidden).send({message: "No tienes autorizacion"});    
+        res.status(httpCode.forbidden).send({message: "No tienes autorización"});    
         return;
     }
-
+    
     const token = req.headers.authorization.split(" ")[1];    
     helperAccount.decodeToken(token)
         .then(userId => {                        
@@ -25,7 +25,7 @@ const isAuth = (req, res, next) => {
             });                       
         })
         .catch(response => {
-            res.status(response.status).send(response.message)
+            res.status(response.status).send({message: response.message});
         });
 }
 

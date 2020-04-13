@@ -8,12 +8,13 @@ const app = require('../app');
 const debug = require('debug')('myapp:server');
 const http = require('http');
 const mongoose = require('mongoose');
-const config = require('../config')
+const config = require('../config');
 
 /**
  * Mongodb Connection
  */
 mongoose.connect(config.db, { useNewUrlParser: true });
+mongoose.pluralize(null);
 mongoose.set('useCreateIndex', true);
 /**
  * Get port from environment and store in Express.

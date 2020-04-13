@@ -1,11 +1,12 @@
 const Product = require('../models/products');
+const { httpCode } = require('../constants/httpResponse');
 
-const getProducts = (req, res, next) => {
+const getProducts = (req, res, next) => {	
     Product.find({}, (err, Products) => {
 		if(err)
-			res.status(500).send({message: `Error al consultar el listado de productos`, info: err})
+			res.status(httpCode.internalErrorServer).send({message: `Error al consultar el listado de productos`, info: err})
 		else
-			res.status(200).send({Products})
+			res.status(httpCode.ok).send({Products})
 	});
 }
 

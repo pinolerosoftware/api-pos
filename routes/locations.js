@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const LocationsController = require('../controllers/locations');
+const auth = require('../middlewares/auth')
 
 /* GET users listing. */
-router.get('/', LocationsController.getLocations);
+router.get('/', auth, LocationsController.getLocations);
 
-router.get('/:locationId', LocationsController.getLocation);
+router.get('/:locationId', auth, LocationsController.getLocation);
 
-router.put('/:locationId', LocationsController.updateLocation);
+router.put('/:locationId', auth, LocationsController.updateLocation);
 
-router.delete('/:locationId', LocationsController.deleteLocation);
+router.delete('/:locationId', auth, LocationsController.deleteLocation);
 
-router.post('/', LocationsController.insertLocation);
+router.post('/', auth, LocationsController.insertLocation);
 
 module.exports = router;

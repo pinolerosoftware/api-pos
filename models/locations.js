@@ -3,7 +3,10 @@ const Schema = mongoose.Schema;
 
 const LocationSchema = new Schema({
     name:  String,
-    companyId: String,
+    companyId: {
+        type: Schema.Types.ObjectId,
+        ref: "company"
+    },
     active: Boolean
 });
 
