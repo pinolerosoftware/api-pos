@@ -13,6 +13,7 @@ const config = require('../config');
 /**
  * Mongodb Connection
  */
+mongoose.set('useFindAndModify', false);
 mongoose.connect(config.db, { useNewUrlParser: true });
 mongoose.pluralize(null);
 mongoose.set('useCreateIndex', true);

@@ -1,8 +1,13 @@
 const Location = require('../models/locations');
 const { httpCode } = require('../constants/httpResponse');
 
-const getLocations = (req, res) => {
-	const query = req.query;	
+const getLocations = (req, res) => {	
+	let query = req.query;
+	query.companyId = req.companyId;	
+	if(!query){
+		res.status(httpCode.internalErrorServer).send({message: `Valores invalidos`, info: err});
+		return;
+	}	
     Location.find(query, (err, locations) => {		
 		if(err)
 			res.status(httpCode.internalErrorServer).send({message: `Error al consultar el listado de ubicaciones`, info: err})
@@ -12,9 +17,14 @@ const getLocations = (req, res) => {
 }
 
 const getLocation = (req, res) => {
-    let {locationId} = req.params;
-	let data = req.body;
-	Location.findById(locationId, data, (err, location) => {
+	let query = req.query;
+	query.companyId = req.companyId;	
+	if(!query){
+		res.status(httpCode.internalErrorServer).send({message: `Valores invalidos`, info: err});
+		return;
+	}	
+	if(!query._id) query._id = req.params.locationId;	
+	Location.findOne(query, (err, location) => {
 		if(err)
 			res.status(httpCode.internalErrorServer).send({message: `Error al actualizar la ubicación`, info: err})
 		else
@@ -22,38 +32,48 @@ const getLocation = (req, res) => {
 	});
 }
 
-const updateLocation = (req, res) => {
-    let {locationId} = req.params;
-	let data = req.body;
-	Location.findByIdAndUpdate(locationId, data, (err, location) => {
-		if(err)
-			res.status(500).send({message: `Error al actualizar la ubicación`, info: err})
-		else
-			res.status(200).send({message: "Actualizado exitosamente", location})
-	});
+const updateLocation = (req, res) => {	
+	const query = {
+		"_id": req.params.locationId,
+		"companyId": req.companyId
+	};
+	let data = req.body;	
+	if(req.companyId === data.companyId && req.params.locationId === data._id){	
+		Location.findOneAndUpdate(query, data, (err, location) => {
+			if(err)
+				res.status(httpCode.internalErrorServer).send({message: `Error al actualizar la ubicación`, info: err})
+			else
+				res.status(httpCode.ok).send(location);
+		});
+	} else 
+		res.status(httpCode.badRequest).send({message: `Error datos incorrectos`})
 }
 
 const deleteLocation = (req, res) => {
-    let {locationId} = req.params;
-	Location.findByIdAndDelete(locationId, (err, Locations) => {
+    const query = {
+		"_id": req.params.locationId,
+		"companyId": req.companyId
+	};
+	
+	Location.findOneAndDelete(query, (err, location) => {
 		if(err)
-			res.status(500).send({message: `Error al eliminar la ubicación`, info: err})
-        else
-			res.status(200).send({message : "Ubicación eliminada"})
+			res.status(httpCode.internalErrorServer).send({message: `Error al eliminar la ubicación`, info: err})
+		else
+			res.status(httpCode.ok).send(location);
 	});
 }
 
 const insertLocation = (req, res) => {
 	let location = new Location();
     location.name = req.body.name;
-	location.companyId = req.body.companyId;
+	location.companyId = req.companyId;
 	location.active = true;
 
-	location.save((err, locationStored) => {
+	location.save((err, location) => {
 		if(err) 
 			res.status(httpCode.internalErrorServer).send({message: `Error al guardar en la base de datos`, info: err})
 		else
-			res.status(httpCode.ok).send({message: "Almacenado exitosamente", location: locationStored})
+			res.status(httpCode.ok).send(location)
 	})
 }
 

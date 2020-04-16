@@ -19,8 +19,9 @@ const isAuth = (req, res, next) => {
                 if(!user) {
                     res.status(httpCode.internalErrorServer).send({message: `Token invalido, usuario invalido`})
                     return;
-                }
-                req.user = userId;
+                }                
+                req.companyId = user.companyId.toString();
+                req.userId = userId;
                 next();
             });                       
         })

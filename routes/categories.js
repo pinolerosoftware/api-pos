@@ -5,15 +5,15 @@ const auth = require('../middlewares/auth')
 
 /* GET users listing. */
 
-router.get('/:companyId', auth, CategoriesController.getCategories);
+router.get('/', auth, CategoriesController.getCategories);
 
-router.get('/:companyId/:categoryId', auth, CategoriesController.getCategory);
+router.get('/:categoryId', auth, CategoriesController.getCategory);
 
-router.post('/:companyId', auth, CategoriesController.insertCategory);
+router.post('/', auth, CategoriesController.insertCategory);
 
-router.put('/:companyId/:categoryId', auth, CategoriesController.updateCategory);
+router.put('/:categoryId', auth, CategoriesController.updateCategory);
 
-router.delete('/:companyId/:categoryId', auth, CategoriesController.deleteCategory);
+router.delete('/:categoryId', auth, CategoriesController.deleteCategory);
 
 
 module.exports = router;
