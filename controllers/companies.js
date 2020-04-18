@@ -1,23 +1,20 @@
 const Company = require('../models/companies');
-
-const getCompanies = (req, res) => {
-    Company.find({userId: req.user}, (err, companies) => {
-		if(err) return res.status(500).send({message: `Error al consultar el listado de compañias`, info: err});
-		
-		return	res.status(200).send({companies});
-	});
-}
+const { httpCode } = require('../constants/httpResponse');
 
 const getCompany = (req, res) => {
-	let {companyId} = req.params;
-	
-    Company.findOne({userId: req.user, _id: companyId}, (err, company) => {
+	let query = req.query;	
+	if(!query){
+		res.status(httpCode.internalErrorServer).send({message: `Valores invalidos`, info: err});
+		return;
+	}	
+	if(!query._id) query._id = req.params.companyId;
+    Company.findOne(query, (err, company) => {
 
-		if(!company) return res.status(500).send({message: `Error, compañia no existe`});
+		if(!company) return res.status(httpCode.badRequest).send({message: `Error, compañia no existe`});
 		
-		if(err) return res.status(500).send({message: `Error al obtener compañia`, info: err});
+		if(err) return res.status(httpCode.internalErrorServer).send({message: `Error al obtener compañia`, info: err});
 		
-		return	res.status(200).send({company});
+		return	res.status(httpCode.ok).send(company);
 	});
 }
 
@@ -113,8 +110,7 @@ const deleteCompany = (req, res) => {
 	});
 }
 
-module.exports = {
-	getCompanies,
+module.exports = {	
 	getCompany,
 	insertCompany,
 	updateCompany,

@@ -74,20 +74,20 @@ const signIn = (req, res) => {
     var email = req.body.email;
     var pass = req.body.password;
     
-    User.findOne({email: email}, (err, user) => {                
+    User.findOne({email: email}, (err, user) => {        
         if (err) return res.status(httpCode.internalErrorServer).send({message: `Error en el servidor ${err}`})
-
-        if (!user) return res.status(httpCode.notFound).send({message: `El usuario no existe`})
+        
+        if (!user) return res.status(httpCode.badRequest).send({message: `El usuario no existe`})
         
         if(!bcrypt.compareSync(pass, user.password)) return res.status(404).send({message: `La contraseña es incorrecta`});        
-
+        
         res.status(httpCode.ok).send({
             userId: user._id,
             companyId: user.companyId,
             message: "Has iniciado sesión correctamente",
             token: helperAccount.createToken(user)
-        })
-	})
+        });
+	});
 }
 
 module.exports = {
