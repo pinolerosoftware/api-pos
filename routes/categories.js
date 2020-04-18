@@ -4,7 +4,6 @@ const CategoriesController = require('../controllers/categories');
 const auth = require('../middlewares/auth')
 
 /* GET users listing. */
-
 router.get('/', auth, CategoriesController.getCategories);
 
 router.get('/:categoryId', auth, CategoriesController.getCategory);

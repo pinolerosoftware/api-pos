@@ -23,7 +23,7 @@ const getLocation = (req, res) => {
 		res.status(httpCode.internalErrorServer).send({message: `Valores invalidos`, info: err});
 		return;
 	}	
-	if(!query._id) query._id = req.params.locationId;	
+	if(!query._id) query._id = req.params.locationId;
 	Location.findOne(query, (err, location) => {
 		if(err)
 			res.status(httpCode.internalErrorServer).send({message: `Error al actualizar la ubicación`, info: err})
@@ -37,7 +37,7 @@ const updateLocation = (req, res) => {
 		"_id": req.params.locationId,
 		"companyId": req.companyId
 	};
-	let data = req.body;	
+	let data = req.body;
 	if(req.companyId === data.companyId && req.params.locationId === data._id){	
 		Location.findOneAndUpdate(query, data, (err, location) => {
 			if(err)
