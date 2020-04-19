@@ -1,60 +1,84 @@
 const Product = require('../models/products');
 const { httpCode } = require('../constants/httpResponse');
 
-const getProducts = (req, res, next) => {	
-    Product.find({}, (err, Products) => {
+const getProducts = (req, res) => {	
+	let query = req.query;
+	query.companyId = req.companyId;
+	if(!query){
+		res.status(httpCode.badRequest).send({message: `Valores invalidos`, info: err});
+		return;
+	}	
+	Product
+	.find(query)
+	.populate('categoryId', 'name')	
+	.exec((err, products) => {		
 		if(err)
-			res.status(httpCode.internalErrorServer).send({message: `Error al consultar el listado de productos`, info: err})
+			res.status(httpCode.internalErrorServer).send({message: `Error al consultar el listado de productos`, info: err});
 		else
-			res.status(httpCode.ok).send({Products})
+			res.status(httpCode.ok).send(products);
 	});
 }
 
-const getProduct = (req, res, next) => {
-    let {productId} = req.params;
+const getProduct = (req, res) => {
+	let query = req.query;
+	query.companyId = req.companyId;
+	if(!query){
+		res.status(httpCode.internalErrorServer).send({message: `Valores invalidos`, info: err});
+		return;
+	}
+	if(!query._id) query._id = req.params.productId;
+	Product.findOne(query, (err, product) => {
+		if(err)
+			res.status(httpCode.internalErrorServer).send({message: `Error al buscar el producto`, info: err})
+		else
+			res.status(httpCode.ok).send(product);
+	});
+}
+
+const updateProduct = (req, res) => {
+    const query = {
+		"_id": req.params.productId,
+		"companyId": req.companyId
+	}
 	let data = req.body;
-	Product.findById(productId, data, (err, Products) => {
-		if(err)
-			res.status(500).send({message: `Error al actualizar el producto`, info: err})
-		else
-			res.status(200).send({Products})
-	});
+	if(req.companyId === data.companyId && req.params.productId === data._id){	
+		Product.findOneAndUpdate(query, data, (err, products) => {
+			if(err)
+				res.status(httpCode.internalErrorServer).send({message: `Error al actualizar el producto`, info: err});
+			else
+				res.status(httpCode.ok).send(products);
+		});
+	} else 
+		res.status(httpCode.badRequest).send({message: `Error datos incorrectos`});
 }
 
-const updateProduct = (req, res, next) => {
-    let {productId} = req.params;
-	let data = req.body;
-	Product.findByIdAndUpdate(productId, data, (err, Products) => {
+const deleteProduct = (req, res) => {
+    const query = {
+		"_id": req.params.productId,
+		"companyId": req.companyId
+	}
+	Product.findOneAndDelete(query, (err, product) => {
 		if(err)
-			res.status(500).send({message: `Error al actualizar el producto`, info: err})
+			res.status(httpCode.internalErrorServer).send({message: `Error al eliminar el producto`, info: err});
 		else
-			res.status(200).send({Products})
-	});
-}
-
-const deleteProduct = (req, res, next) => {
-    let {productId} = req.params;
-	Product.findByIdAndDelete(productId, (err, Products) => {
-		if(err)
-			res.status(500).send({message: `Error al eliminar el producto`, info: err})
-		else
-			res.status(200).send({message: "Producto eliminado"})
+			res.status(httpCode.ok).send(product);
 	});
 }
 
 const insertProduct = (req, res, next) => {
 	let product = new Product();
 	product.name = req.body.name;
-	product.category = req.body.category;
-	product.location = req.body.location;
+	product.categoryId = req.body.categoryId;	
 	product.description = req.body.description;
 	product.price = req.body.price;
+	product.companyId = req.companyId;
+	product.active = true;
 
 	product.save((err, productStored) => {
 		if(err) 
-			res.status(500).send({message: `Error al guardar en la base de datos`, info: err})
+			res.status(httpCode.internalErrorServer).send({message: `Error al guardar en la base de datos`, info: err});
 		else
-			res.status(200).send({message: "Almacenado exitosamente", product: productStored})
+			res.status(httpCode.ok).send(productStored);
 	})
 }
 

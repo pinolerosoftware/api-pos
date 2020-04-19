@@ -7,7 +7,8 @@ const LocationSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "company"
     },
-    active: Boolean
+    active: Boolean,
+    creationDate: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model('Location', LocationSchema);

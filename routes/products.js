@@ -6,15 +6,15 @@ const auth = require('../middlewares/auth');
 //const singleUpload = upload.single('image')
 
 /* GET product listing. */
-router.get('/', ProductsController.getProducts);
+router.get('/', auth, ProductsController.getProducts);
 
-router.get('/:productId', ProductsController.getProduct);
+router.get('/:productId', auth, ProductsController.getProduct);
 
-router.put('/:productId', ProductsController.updateProduct);
+router.post('/', auth, ProductsController.insertProduct);
 
-router.delete('/:productId', ProductsController.deleteProduct);
+router.put('/:productId', auth, ProductsController.updateProduct);
 
-router.post('/', ProductsController.insertProduct);
+router.delete('/:productId', auth, ProductsController.deleteProduct);
 
 // router.post('/upload', function(req, res) {
 //     singleUpload(req, res, function(err, some) {

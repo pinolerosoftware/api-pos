@@ -7,7 +7,8 @@ const CategorySchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Company"
     },
-    active: Boolean
+    active: Boolean,
+    creationDate: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model('Category', CategorySchema);

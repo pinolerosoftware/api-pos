@@ -22,11 +22,11 @@ const getLocation = (req, res) => {
 	if(!query){
 		res.status(httpCode.internalErrorServer).send({message: `Valores invalidos`, info: err});
 		return;
-	}	
+	}
 	if(!query._id) query._id = req.params.locationId;
 	Location.findOne(query, (err, location) => {
 		if(err)
-			res.status(httpCode.internalErrorServer).send({message: `Error al actualizar la ubicación`, info: err})
+			res.status(httpCode.internalErrorServer).send({message: `Error al buscar la ubicación`, info: err})
 		else
 			res.status(httpCode.ok).send(location)
 	});
