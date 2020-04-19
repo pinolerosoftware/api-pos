@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt-nodejs');
 const User = require('../models/user');
-const Company = require('../models/company');
+const Company = require('../models/company/company');
+const SettingController = require('../controllers/company/setting');
 const helperAccount = require('../helper/account');
 const { httpCode } = require('../constants/httpResponse');
 
@@ -57,6 +58,8 @@ const signUp = (req, res) => {
                     User.updateOne({ _id: user._id}, { companyId: company._id }, (err, userModified) => {
                         if (err) return res.status(httpCode.internalErrorServer).send({message: `Error al registrar el usuario ${err}`});
                         
+                        SettingController.createSettingDefault(user.companyId, user._id);
+
                         return res.status(httpCode.ok).send({
                             token: helperAccount.createToken(user), 
                             userId: user._id,
@@ -80,7 +83,7 @@ const signIn = (req, res) => {
         if (!user) return res.status(httpCode.badRequest).send({message: `El usuario no existe`})
         
         if(!bcrypt.compareSync(pass, user.password)) return res.status(httpCode.badRequest).send({message: `La contraseña es incorrecta`});
-        
+              
         res.status(httpCode.ok).send({
             userId: user._id,
             companyId: user.companyId,

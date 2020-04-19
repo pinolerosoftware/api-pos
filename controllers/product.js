@@ -10,8 +10,8 @@ const getProducts = (req, res) => {
 	}	
 	Product
 	.find(query)
-	.populate('categoryId', 'name')	
-	.exec((err, products) => {		
+	.populate('categoryId', 'name')
+	.exec((err, products) => {
 		if(err)
 			res.status(httpCode.internalErrorServer).send({message: `Error al consultar el listado de productos`, info: err});
 		else
@@ -79,7 +79,7 @@ const insertProduct = (req, res, next) => {
 			res.status(httpCode.internalErrorServer).send({message: `Error al guardar en la base de datos`, info: err});
 		else
 			res.status(httpCode.ok).send(productStored);
-	})
+	});
 }
 
 

@@ -11,15 +11,15 @@ const usersRouter = require('./routes/user');
 const productsRouter = require('./routes/product');
 const locationsRouter = require('./routes/location');
 const categoriesRouter = require('./routes/category');
-const companiesRouter = require('./routes/company');
-
+const companiesRouter = require('./routes/company/company');
+const salesRouter = require('./routes/sales/sales');
+const settingRouter = require('./routes/company/setting');
 
 app.use(cors())
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
 
 //Routers
 app.use('/api/', indexRouter);
@@ -28,6 +28,8 @@ app.use('/api/companies', companiesRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/locations', locationsRouter);
 app.use('/api/categories', categoriesRouter);
+app.use('/api/sales', salesRouter);
+app.use('/api/settings', settingRouter);
 
 
 // catch 404 and forward to error handler
