@@ -1,6 +1,6 @@
 const helperAccount = require('../helper/account');
 const { httpCode } = require('../constants/httpResponse');
-const User = require('../models/users');
+const User = require('../models/user');
 
 const isAuth = (req, res, next) => {    
     if (!req.headers.authorization) {

@@ -7,11 +7,11 @@ const app = express();
 
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const productsRouter = require('./routes/products');
-const locationsRouter = require('./routes/locations');
-const categoriesRouter = require('./routes/categories');
-const companiesRouter = require('./routes/companies');
+const usersRouter = require('./routes/user');
+const productsRouter = require('./routes/product');
+const locationsRouter = require('./routes/location');
+const categoriesRouter = require('./routes/category');
+const companiesRouter = require('./routes/company');
 
 
 app.use(cors())

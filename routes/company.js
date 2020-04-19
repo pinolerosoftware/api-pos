@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const CompaniesController = require('../controllers/companies');
+const CompaniesController = require('../controllers/company');
 const auth = require('../middlewares/auth');
 
 router.get('/:companyId', auth, CompaniesController.getCompany);

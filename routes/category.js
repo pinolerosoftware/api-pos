@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const CategoriesController = require('../controllers/categories');
+const CategoriesController = require('../controllers/category');
 const auth = require('../middlewares/auth')
 
 /* GET users listing. */

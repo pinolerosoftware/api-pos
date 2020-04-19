@@ -1,4 +1,4 @@
-const Company = require('../models/companies');
+const Company = require('../models/company');
 const { httpCode } = require('../constants/httpResponse');
 
 const getCompany = (req, res) => {

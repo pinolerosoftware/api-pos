@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt-nodejs');
-const User = require('../models/users');
-const Company = require('../models/companies');
+const User = require('../models/user');
+const Company = require('../models/company');
 const helperAccount = require('../helper/account');
 const { httpCode } = require('../constants/httpResponse');
 
@@ -79,7 +79,7 @@ const signIn = (req, res) => {
         
         if (!user) return res.status(httpCode.badRequest).send({message: `El usuario no existe`})
         
-        if(!bcrypt.compareSync(pass, user.password)) return res.status(404).send({message: `La contraseña es incorrecta`});        
+        if(!bcrypt.compareSync(pass, user.password)) return res.status(httpCode.badRequest).send({message: `La contraseña es incorrecta`});
         
         res.status(httpCode.ok).send({
             userId: user._id,

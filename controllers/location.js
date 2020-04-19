@@ -1,4 +1,4 @@
-const Location = require('../models/locations');
+const Location = require('../models/location');
 const { httpCode } = require('../constants/httpResponse');
 
 const getLocations = (req, res) => {	
