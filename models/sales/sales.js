@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const SaleSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: "user" },
+    companyId: { type: Schema.Types.ObjectId, ref: "company" },
     date: { type: Schema.Types.Date, default: Date.now },
     subTotal: { type: Schema.Types.Number },
     tax: { type: Schema.Types.Number },

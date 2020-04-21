@@ -6,7 +6,7 @@ const SalesDetailSchema = new Schema({
     productId: { type: Schema.Types.ObjectId, ref: "products" },
     quantity: { type: Schema.Types.Number },
     unitPrice: { type: Schema.Types.Number },
-    total: { type: Schema.Types.Number },    
+    total: { type: Schema.Types.Number }
 });
 
 module.exports = mongoose.model('SalesDetail', SalesDetailSchema);

@@ -21,7 +21,7 @@ const isAuth = (req, res, next) => {
                     return;
                 }                
                 req.companyId = user.companyId.toString();
-                req.userId = userId;
+                req.userId = userId.toString();
                 next();
             });                       
         })
